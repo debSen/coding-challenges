@@ -18,3 +18,4 @@ if __name__ == '__main__':
                         default=1, help='number of requests')
     args = parser.parse_args()
     load_tester(args.url,args.number)
+
