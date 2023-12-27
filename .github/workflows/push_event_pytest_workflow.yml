@@ -14,4 +14,4 @@ jobs:
       run : pip install pytest
       
     - name : Run tests 
-      run : pytest load_tester/tests/test.py
+      run : pytest load_tester/test.py
