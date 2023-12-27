@@ -7,10 +7,13 @@ def load_tester(url,count):
     :url: URL where request should be sent
     :count: The number of requests to be sent
     """
+    response_codes = []
     while count:
         res = get(url, timeout=10)
-        print(res.status_code)
+        response_codes.append(res.status_code)
         count -= 1
+    print(response_codes)
+    return response_codes
 
 
 if __name__ == '__main__':
