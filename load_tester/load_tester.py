@@ -1,5 +1,7 @@
+import concurrent.futures
 import argparse
 from requests import get
+
 
 def load_tester(url,count):
     """
@@ -8,10 +10,15 @@ def load_tester(url,count):
     :count: The number of requests to be sent
     """
     response_codes = []
-    while count:
-        res = get(url, timeout=10)
-        response_codes.append(res.status_code)
-        count -= 1
+    urls = [url] * count
+    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
+        # Start the load operations and mark each future with its URL
+        future_to_url = {executor.submit(get, url, timeout=10) for url in urls}
+        for future in concurrent.futures.as_completed(future_to_url):
+            data = future.result()
+            response_codes.append(data.status_code)
+            if future.exception() is not None:
+               print(f'ERROR: {future}: {future.exception()}')
     print(response_codes)
     return response_codes
 
