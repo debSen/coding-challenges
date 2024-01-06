@@ -3,7 +3,6 @@ import argparse
 import json
 import sys
 from requests import get
-from time import sleep
 
 
 def load_tester(url,count):
@@ -21,7 +20,7 @@ def load_tester(url,count):
             data = future.result()
             response_codes.append(data.status_code)
             if future.exception() is not None:
-               print(f'ERROR: {future}: {future.exception()}')
+                print(f'ERROR: {future}: {future.exception()}')
     print(response_codes)
     return response_codes
 
@@ -35,15 +34,15 @@ if __name__ == '__main__':
     parser.add_argument("-url", type=str, help="url")
     parser.add_argument("-n", "--number", dest="number", type=int,
                         help="number of requests")
-    
+
     parser.add_argument("-readFromFile", type=str, help="filename")
     args = parser.parse_args()
     if args.readFromFile and (args.url or args.number):
         print("readFromFile and url|number are mutually exclusive")
         sys.exit(2)
     if args.readFromFile:
-        with open(args.readFromFile, 'r') as f:
-            data = json.load(f)
-            args.url = data["url"]
-            args.number = data["number"]
+        with open(args.readFromFile, 'r', encoding='utf-8') as f:
+            input_data = json.load(f)
+            args.url = input_data["url"]
+            args.number = input_data["number"]
     load_tester(args.url,args.number)
