@@ -1,6 +1,9 @@
 import concurrent.futures
 import argparse
+import json
+import sys
 from requests import get
+from time import sleep
 
 
 def load_tester(url,count):
@@ -28,8 +31,19 @@ if __name__ == '__main__':
                         prog='load_tester',
                         description='Load test using python',
                         epilog='')
-    parser.add_argument("url", type=str, help="url")
-    parser.add_argument('-n', '--number', dest='number', type=int,
-                        default=1, help='number of requests')
+    # group = parser.add_mutually_exclusive_group()
+    parser.add_argument("-url", type=str, help="url")
+    parser.add_argument("-n", "--number", dest="number", type=int,
+                        help="number of requests")
+    
+    parser.add_argument("-readFromFile", type=str, help="filename")
     args = parser.parse_args()
+    if args.readFromFile and (args.url or args.number):
+        print("readFromFile and url|number are mutually exclusive")
+        sys.exit(2)
+    if args.readFromFile:
+        with open(args.readFromFile, 'r') as f:
+            data = json.load(f)
+            args.url = data["url"]
+            args.number = data["number"]
     load_tester(args.url,args.number)
